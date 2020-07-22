@@ -1,4 +1,4 @@
-1. Arduino Nano ----------------------- x1
-2. L9110 H-Bridge Module -------------- x1
-3. DC Motor --------------------------- x4
+1. Arduino UNO ----------------------- x1
+2. L298N H-Bridge Module -------------- x1
+3. DC Motor --------------------------- x2
 4. Ultrasonic Sensor - HC-SR04 -------- x3
