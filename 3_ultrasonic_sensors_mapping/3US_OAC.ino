@@ -1,32 +1,50 @@
-const int frontEchoPin = 7;
-const int frontTriggerPin = 6;
-const int leftEchoPin = 11;
-const int leftTriggerPin = 10;
-const int rightEchoPin = 9;
-const int rightTriggerPin = 8;
-const int motorL1 = 2;
-const int motorL2 = 3;
-const int motorR1 = 4;
-const int motorR2 = 5;
-volatile float maxFrontDistance = 25.00;
-volatile float frontDuration, frontDistanceCm, leftDuration, leftDistanceCm, rightDuration, rightDistanceCm;
-volatile float maxLeftDistance, maxRightDistance = 20.00;
+#include <Servo.h>          //standard library for the servo
+#include <NewPing.h>        //for the Ultrasonic sensor function library.const int frontEchoPin = 7;
+
+//L298N motor control pins
+const int ENA = 5;
+const int RightMotorForward = 4;
+const int RightMotorBackward = 3;
+const int LeftMotorForward = 9;
+const int LefttMotorBackward = 10;
+const int ENB = 11;
+
+//sensor pins
+#define trig_front A0 //analog input 0
+#define echo_front A1 //analog input 1
+#define trig1_left A2 //analog input 2
+#define echo1_left A3 //analog input 3
+#define trig1_right A4 //analog input 4
+#define echo1_right A5 //analog input 5
+
+#define maximum_distance 200
+boolean goesForward = false;
+int distance = 100;
+
+NewPing sonar(trig_pin, echo_pin, maximum_distance); //sensor function
+Servo servo_motor;
 
 void setup() {
   // serial
   Serial.begin(9600);
+  
   // ultrasonic
-  pinMode(frontTriggerPin, OUTPUT);
-  pinMode(frontEchoPin, INPUT);
-  pinMode(leftTriggerPin, OUTPUT);
-  pinMode(leftEchoPin, INPUT);
-  pinMode(rightTriggerPin, OUTPUT);
-  pinMode(rightEchoPin, INPUT);
+  pinMode(trig_front, OUTPUT);
+  pinMode(echo_front, INPUT);
+  pinMode(trig_left, OUTPUT);
+  pinMode(echo_left, INPUT);
+  pinMode(trig_right, OUTPUT);
+  pinMode(trig_right, INPUT);
+  analogWrite(ENA, 80);
+  analogWrite(ENB, 88);
+  
   // motors
-  pinMode(motorL1, OUTPUT);
-  pinMode(motorL2, OUTPUT);
-  pinMode(motorR1, OUTPUT);
-  pinMode(motorR2, OUTPUT);
+  pinMode(LeftMotorForward, OUTPUT);
+  pinMode(LeftMotorBackward, OUTPUT);
+  pinMode(ENA, OUTPUT)
+  pinMode(RightMotorForward, OUTPUT);
+  pinMode(RightMotorBackward, OUTPUT);
+  pinMode(ENB, OUTPUT);
 }
 
 void loop() {
@@ -82,73 +100,74 @@ void loop() {
   }
 }
 
-void checkFrontDistance() {
-  digitalWrite(frontTriggerPin, LOW);  //para generar un pulso limpio ponemos a LOW 4us
-  delayMicroseconds(4);
-  digitalWrite(frontTriggerPin, HIGH);  //generamos Trigger (disparo) de 10us
-  delayMicroseconds(10);
-  digitalWrite(frontTriggerPin, LOW);
-  frontDuration = pulseIn(frontEchoPin, HIGH);  //medimos el tiempo entre pulsos, en microsegundos
-  frontDistanceCm = frontDuration * 10 / 292 / 2;  //convertimos a distancia, en cm
-  Serial.print("Distance: ");
-  Serial.print(frontDistanceCm);
-  Serial.println(" cm");
+void moveStop(){
+  
+  digitalWrite(RightMotorForward, LOW);
+  digitalWrite(LeftMotorForward, LOW);
+  digitalWrite(RightMotorBackward, LOW);
+  digitalWrite(LeftMotorBackward, LOW);
 }
 
-void checkLeftDistance() {
-  digitalWrite(leftTriggerPin, LOW);  //para generar un pulso limpio ponemos a LOW 4us
-  delayMicroseconds(4);
-  digitalWrite(leftTriggerPin, HIGH);  //generamos Trigger (disparo) de 10us
-  delayMicroseconds(10);
-  digitalWrite(leftTriggerPin, LOW);
-  leftDuration = pulseIn(leftEchoPin, HIGH);  //medimos el tiempo entre pulsos, en microsegundos
-  leftDistanceCm = leftDuration * 10 / 292 / 2;  //convertimos a distancia, en cm
-  Serial.print("Left distance: ");
-  Serial.print(leftDistanceCm);
-  Serial.println(" cm");
+void moveForward(){
+
+  if(!goesForward){
+
+    goesForward=true;
+    
+    digitalWrite(LeftMotorForward, HIGH);
+    digitalWrite(RightMotorForward, HIGH);
+  
+    digitalWrite(LeftMotorBackward, LOW);
+    digitalWrite(RightMotorBackward, LOW); 
+  }
 }
 
-void checkRightDistance() {
-  digitalWrite(rightTriggerPin, LOW);  //para generar un pulso limpio ponemos a LOW 4us
-  delayMicroseconds(4);
-  digitalWrite(rightTriggerPin, HIGH);  //generamos Trigger (disparo) de 10us
-  delayMicroseconds(10);
-  digitalWrite(rightTriggerPin, LOW);
-  rightDuration = pulseIn(rightEchoPin, HIGH);  //medimos el tiempo entre pulsos, en microsegundos
-  rightDistanceCm = rightDuration * 10 / 292 / 2;  //convertimos a distancia, en cm
-  Serial.print("Right distance: ");
-  Serial.print(rightDistanceCm);
-  Serial.println(" cm");
+void moveBackward(){
+
+  goesForward=false;
+
+  digitalWrite(LeftMotorBackward, HIGH);
+  digitalWrite(RightMotorBackward, HIGH);
+  
+  digitalWrite(LeftMotorForward, LOW);
+  digitalWrite(RightMotorForward, LOW);
+  
 }
 
-void moveBackward() {
-  Serial.println("Backward.");
-  digitalWrite(motorL1, HIGH);
-  digitalWrite(motorL2, LOW);
-  digitalWrite(motorR1, HIGH);
-  digitalWrite(motorR2, LOW);
+void turnRight(){
+
+  digitalWrite(LeftMotorForward, HIGH);
+  digitalWrite(RightMotorBackward, HIGH);
+  
+  digitalWrite(LeftMotorBackward, LOW);
+  digitalWrite(RightMotorForward, LOW);
+  
+  delay(500);
+  
+  digitalWrite(LeftMotorForward, HIGH);
+  digitalWrite(RightMotorForward, HIGH);
+  
+  digitalWrite(LeftMotorBackward, LOW);
+  digitalWrite(RightMotorBackward, LOW);
+ 
+  
+  
 }
 
-void moveForward() {
-  Serial.println("Forward.");
-  digitalWrite(motorL1, LOW);
-  digitalWrite(motorL2, HIGH);
-  digitalWrite(motorR1, LOW);
-  digitalWrite(motorR2, HIGH);
+void turnLeft(){
+
+  digitalWrite(LeftMotorBackward, HIGH);
+  digitalWrite(RightMotorForward, HIGH);
+  
+  digitalWrite(LeftMotorForward, LOW);
+  digitalWrite(RightMotorBackward, LOW);
+
+  delay(500);
+  
+  digitalWrite(LeftMotorForward, HIGH);
+  digitalWrite(RightMotorForward, HIGH);
+  
+  digitalWrite(LeftMotorBackward, LOW);
+  digitalWrite(RightMotorBackward, LOW);
 }
 
-void moveLeft() {
-  Serial.println("Left.");
-  digitalWrite(motorL1, LOW);
-  digitalWrite(motorL2, HIGH);
-  digitalWrite(motorR1, HIGH);
-  digitalWrite(motorR2, LOW);
-}
-
-void moveRight() {
-  Serial.println("Right.");
-  digitalWrite(motorL1, HIGH);
-  digitalWrite(motorL2, LOW);
-  digitalWrite(motorR1, LOW);
-  digitalWrite(motorR2, HIGH);
-}
