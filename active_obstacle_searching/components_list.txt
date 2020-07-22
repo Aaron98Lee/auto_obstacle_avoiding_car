@@ -1,0 +1,6 @@
+1. Arduino Uno -------------------------- x1
+2. Dual H-Bridge Motor Driver L298 ------ x1
+3. Ultrasonic Sensor - HC-SR04 ---------- x1
+4. Servo Motor MG996R ------------------- x1
+5. DC Motor ----------------------------- x2
+6  Battery & Battery Holder ------------- x1
