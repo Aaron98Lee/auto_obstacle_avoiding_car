@@ -48,57 +48,87 @@ void setup() {
 }
 
 void loop() {
-  // front distance check
-  checkFrontDistance();
-  if (frontDistanceCm < maxFrontDistance) {
-    Serial.println("Too close");
-    checkLeftDistance();
-    delay(20);
-    checkRightDistance();
-    delay(20);
-    if (leftDistanceCm < rightDistanceCm)
-      moveRight();
-    else if (leftDistanceCm > rightDistanceCm) {
-      moveLeft();
+  Serial.begin(9600);
+  
+  long duration_front;
+  long distance_front;
+  long duration_left;
+  long distance_left;
+  long duration_right;
+  long distance_right;
+
+//Calculating distance
+
+digitalWrite(trig_front, LOW);
+delay(2);
+digitalWrite(trig_front, HIGH);
+delay(10);
+digitalWrite(trig_front, LOW);
+duration_front = pilseIN(echo_front, HIGH);
+distance_front = duration_front*0.034/2;
+
+digitalWrite(trig_left, LOW);
+delay(2);
+digitalWrite(trig_left, HIGH);
+delay(10);
+digitalWrite(trig_left, LOW);
+duration_left = pilseIN(echo_front, HIGH);
+distance_left = duration_front*0.034/2;
+
+digitalWrite(trig_right, LOW);
+delay(2);
+digitalWrite(trig_right, HIGH);
+delay(10);
+digitalWrite(trig_right, LOW);
+duration_right = pilseIN(echo_front, HIGH);
+distance_right = duration_front*0.034/2;
+  
+Serial.print("front = ");
+Serial.println(distance_front);
+Serial.print("Left = ");
+Serial.println(distance_left);
+Serial.print("Right = ");
+Serial.println(distance_right);  
+delay(50);
+
+if (distance_front >20){
+
+    forward();
+    
+    if(distance_left > 10&& distance_left<20){
+      forward();
     }
-  }
-  else {
-    Serial.println("OK");
-    moveForward();
+    if(distance_left >=20){
+       left();
+       delay(30);
+       forward();
+    }
+    if(distance_left<10 && distance_left>0){
+      right();
+      delay(30);
+      forward();
+    }
+ } 
+  
+  if(distance_front<=20&& distance_right > 20){
+    Stop();
+    delay(1000);
+    right();
+    delay(400);
+    
   }
 
-  // left distance check
-  checkLeftDistance();
-  if (leftDistanceCm < maxLeftDistance) {
-    Serial.println("Left too close");
-    delay(20);
-    checkLeftDistance();
-    delay(20);
-    checkRightDistance();
-    delay(20);
-    if (leftDistanceCm > rightDistanceCm)
-      moveForward();
-    else if (leftDistanceCm < rightDistanceCm) {
-      moveRight();
-    }
+  if(distance_front<=20 && distance_right<20){
+    Stop();
+    delay(1000);
+    right();
+    delay(800);
+   
   }
-
-  // right distance check
-  checkRightDistance();
-  if (rightDistanceCm < maxRightDistance) {
-    Serial.println("Right too close");
-    delay(20);
-    checkRightDistance();
-    delay(20);
-    checkLeftDistance();
-    delay(20);
-    if (rightDistanceCm > leftDistanceCm)
-      moveForward();
-    else if (rightDistanceCm < leftDistanceCm) {
-      moveLeft();
-    }
-  }
+  
+  
 }
+
 
 void moveStop(){
   
