@@ -12,10 +12,10 @@ const int ENB = 11;
 //sensor pins
 #define trig_front A0 //analog input 0
 #define echo_front A1 //analog input 1
-#define trig1_left A2 //analog input 2
-#define echo1_left A3 //analog input 3
-#define trig1_right A4 //analog input 4
-#define echo1_right A5 //analog input 5
+#define trig_left A2 //analog input 2
+#define echo_left A3 //analog input 3
+#define trig_right A4 //analog input 4
+#define echo_right A5 //analog input 5
 
 #define maximum_distance 200
 boolean goesForward = false;
