@@ -34,7 +34,7 @@ void setup() {
   pinMode(trig_left, OUTPUT);
   pinMode(echo_left, INPUT);
   pinMode(trig_right, OUTPUT);
-  pinMode(trig_right, INPUT);
+  pinMode(echo_right, INPUT);
   analogWrite(ENA, 80);
   analogWrite(ENB, 88);
   
@@ -64,7 +64,7 @@ delay(2);
 digitalWrite(trig_front, HIGH);
 delay(10);
 digitalWrite(trig_front, LOW);
-duration_front = pilseIN(echo_front, HIGH);
+duration_front = pulseIN(echo_front, HIGH);
 distance_front = duration_front*0.034/2;
 
 digitalWrite(trig_left, LOW);
@@ -72,7 +72,7 @@ delay(2);
 digitalWrite(trig_left, HIGH);
 delay(10);
 digitalWrite(trig_left, LOW);
-duration_left = pilseIN(echo_front, HIGH);
+duration_left = pulseIN(echo_left, HIGH);
 distance_left = duration_front*0.034/2;
 
 digitalWrite(trig_right, LOW);
@@ -80,7 +80,7 @@ delay(2);
 digitalWrite(trig_right, HIGH);
 delay(10);
 digitalWrite(trig_right, LOW);
-duration_right = pilseIN(echo_front, HIGH);
+duration_right = pulseIN(echo_right, HIGH);
 distance_right = duration_front*0.034/2;
   
 Serial.print("front = ");
