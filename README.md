@@ -1,7 +1,7 @@
 # Auto Obstacle Avoiding Car
-automatic obstacle avoiding car
+*automatic obstacle avoiding car
 
-This directory consist 2 obstacle avoiding car projects:
+*This directory consist 2 obstacle avoiding car projects:
 
 # Active obstacle searching system:
 car ultrasonic sensor actively do maping of the environment and make decision on its driving direction
